@@ -1,10 +1,29 @@
 const Koa = require('koa')
 const bodyparser = require('koa-bodyparser')
+const error = require('koa-json-error')
 const routing = require('./routes')
 const app = new Koa()
 
-routing(app)
+
+//自己编写的错误处理中间件
+// app.use(async (ctx,next) => {
+//   try{
+//     await next();
+//   }catch(err){
+//     ctx.status = err.status || err.statusCode || 500
+//     ctx.body = {
+//       message: err.message
+//     }
+//   }
+// })
+
+app.use(error({
+  postFormat:(e,{stack,...rest}) => process.env.NODE_ENV === 'production' ? rest : {stack, ...rest}
+}))
+
 app.use(bodyparser())
+routing(app)
+
 
 
 
