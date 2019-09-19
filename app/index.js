@@ -1,9 +1,14 @@
 const Koa = require('koa')
 const bodyparser = require('koa-bodyparser')
 const error = require('koa-json-error')
+const parameter = require('koa-parameter')
+const mongoose = require('mongoose')
 const routing = require('./routes')
+const {connectionStr} = require('./config')
 const app = new Koa()
 
+mongoose.connect(connectionStr,{ useNewUrlParser: true ,useUnifiedTopology: true}, () => console.log('mongodb 连接成功'))
+mongoose.connection.on('error', console.error)
 
 //自己编写的错误处理中间件
 // app.use(async (ctx,next) => {
@@ -22,6 +27,7 @@ app.use(error({
 }))
 
 app.use(bodyparser())
+app.use(parameter(app))
 routing(app)
 
 
