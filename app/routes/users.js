@@ -1,6 +1,35 @@
+const jsonwebtoken = require('jsonwebtoken')
 const Router = require('koa-router')
-const { find,findById,create,updated,deleted } = require('../controllers/users')
+const { 
+  find,findById,create,updated,deleted,login
+} = require('../controllers/users')
+const {secret} = require('../config')
 const router = new Router({prefix:'/users'})
+
+//自己编写的认证中间件
+const auth = async (ctx,next) => {
+  // Bearer+空格+token 的形式  
+  // ctx.request.header 把里边的字段变成小写了 authorization
+  const {authorization = ''} = ctx.request.header
+  const token = authorization.replace('Bearer ','')
+  
+  try{
+    //有可能报错 抛出500
+    const user = jsonwebtoken.verify(token,secret)
+    ctx.state.user = user
+  }catch(err){
+    ctx.throw(401,err.message)
+  }
+  await next()
+}
+
+//自己编写的授权中间件
+const checkOwner = async (ctx,next) =>{
+  if(ctx.params.id !== ctx.state.user._id){
+    ctx.throw(403,'没有权限这么做')
+  }
+  await next()
+}
 
 
 router.get('/',find)
@@ -8,10 +37,12 @@ router.get('/',find)
 router.post('/',create)
 
 router.get('/:id',findById)
+//put  整体修改   patch 部分修改
+router.patch('/:id',auth,checkOwner,updated)
 
-router.put('/:id',updated)
+router.delete('/:id',auth,checkOwner,deleted)
 
-router.delete('/:id',deleted)
+router.post('/login',login)
 
 
 
