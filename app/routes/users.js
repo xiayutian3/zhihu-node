@@ -1,3 +1,4 @@
+const jwt = require('koa-jwt')
 const jsonwebtoken = require('jsonwebtoken')
 const Router = require('koa-router')
 const { 
@@ -5,6 +6,12 @@ const {
 } = require('../controllers/users')
 const {secret} = require('../config')
 const router = new Router({prefix:'/users'})
+
+
+// koa-jwt认证中间件
+const authkoajwt = jwt({secret})
+
+
 
 //自己编写的认证中间件
 const auth = async (ctx,next) => {
@@ -32,15 +39,18 @@ const checkOwner = async (ctx,next) =>{
 }
 
 
+
+
+
 router.get('/',find)
 
 router.post('/',create)
 
 router.get('/:id',findById)
 //put  整体修改   patch 部分修改
-router.patch('/:id',auth,checkOwner,updated)
+router.patch('/:id',authkoajwt,checkOwner,updated)
 
-router.delete('/:id',auth,checkOwner,deleted)
+router.delete('/:id',authkoajwt,checkOwner,deleted)
 
 router.post('/login',login)
 

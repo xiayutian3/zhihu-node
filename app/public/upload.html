@@ -1,0 +1,13 @@
+<form action="/upload" enctype="multipart/form-data" method="POST">
+  <!-- 只显示png 图片 -->
+  <!-- <input type="file" name="file" accept="image/png"> -->
+  <!-- <input type="file" name="file" accept=".png"> -->
+
+  <!-- 支持多种格式 -->
+  <!-- <input type="file" name="file" accept="image/png,image/jpeg"> -->
+  <!-- <input type="file" name="file" accept=".png, .jpg, .jpeg"> -->
+
+  <!-- 支持所有图片文件 -->
+  <input type="file" name="file" accept="image/*">
+  <button type="submit">上传</button>
+</form>

@@ -1,5 +1,12 @@
 const Koa = require('koa')
-const bodyparser = require('koa-bodyparser')
+ 
+//支持json form  文件 传输
+const koabody = require('koa-body')
+//只支持json form 格式 
+// const bodyparser = require('koa-bodyparser')
+const path = require('path')
+//设置静态资源中间件
+const koaStatic = require('koa-static')
 const error = require('koa-json-error')
 const parameter = require('koa-parameter')
 const mongoose = require('mongoose')
@@ -23,11 +30,20 @@ mongoose.connection.on('error', console.error)
 //   }
 // })
 
+app.use(koaStatic(path.join(__dirname,'public')))
+
 app.use(error({
   postFormat:(e,{stack,...rest}) => process.env.NODE_ENV === 'production' ? rest : {stack, ...rest}
 }))
 
-app.use(bodyparser())
+// app.use(bodyparser())
+app.use(koabody({
+  multipart:true, //启用支持文件
+  formidable:{   //node 一个npm包，用法跟她本身一样， koabody引用了这个包
+    uploadDir:path.join(__dirname,'/public/uploads'),      //指定上传目录
+    keepExtensions:true              //保留拓展名（默认为false）
+  }
+}))
 app.use(parameter(app))
 routing(app)
 
