@@ -9,12 +9,12 @@ const userSchema = new Schema({
   avatar_url:{type:String},
   gender:{type:String,enum:['male','female'],default:'male',required:true},
   headline:{type:String},
-  locations:{type:[{type:String}]},
-  business:{type:String},
+  locations:{type:[{type:String}],select:false},
+  business:{type:[{type:String}],select:false},
   employments:{type:[{
     company:{type:String},
     job:{type:String}
-  }]},
+  }],select:false},
   educations:{
     type:[{
       school:String,
@@ -22,7 +22,7 @@ const userSchema = new Schema({
       diploma:{type:String,enum:[1,2,3,4,5,]},
       entrance_year:Number,
       graduation_year:Number
-    }]
+    }],select:false
   }
 })
 module.exports = model('User',userSchema)

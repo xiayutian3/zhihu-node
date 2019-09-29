@@ -7,8 +7,8 @@ const koabody = require('koa-body')
 const path = require('path')
 //设置静态资源中间件
 const koaStatic = require('koa-static')
-const error = require('koa-json-error')
-const parameter = require('koa-parameter')
+const error = require('koa-json-error')  //错误处理
+const parameter = require('koa-parameter') //参数校验
 const mongoose = require('mongoose')
 const routing = require('./routes')
 const {connectionStr} = require('./config')

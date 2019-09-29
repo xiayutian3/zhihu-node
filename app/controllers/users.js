@@ -4,12 +4,20 @@ const {secret} = require('../config')
 
 class UsersCtl {
   async find(ctx){
-    // 加上密码返回  .select('+password')  省略密码 .select('-password')
+    // 加上密码,age返回 中间要有空格隔开  .select('+password')  .select('+password +age')  省略密码 .select('-password')
     // ctx.body = await User.find().select('+password')
     ctx.body = await User.find()
   }
   async findById(ctx){
-    const user = await User.findById(ctx.params.id)
+    const {fields} = ctx.query
+    const selectFields = fields.split(';').filter(f => f).map(f=>' +'+f).join('')
+    // console.log(fields.split(';')) //   [ 'locations', 'business' ]
+    // console.log(selectFields)  //   ‘ +locations +business’
+
+    //返回中就多了两个字段locations，employments  中间要有空格隔开 第一个前边有空格也没关系
+    // const user = await User.findById(ctx.params.id).select('+locations +employments')
+    
+    const user = await User.findById(ctx.params.id).select(selectFields)
     if(!user){
       ctx.throw(404,'用户不存在')
       return
@@ -34,8 +42,15 @@ class UsersCtl {
     ctx.verifyParams({
       //设为false因为可能修改该的是password，或者是name
       name:{type:'string',required:false},
-      password:{type:'string',required:false}
+      password:{type:'string',required:false},
       // age:{type:'number',required:false}
+      avatar_url:{type:'string',required:false},
+      gender:{type:'string',required:false},
+      headline:{type:'string',required:false},
+      locations:{type:'array',itemType:'string',required:false},
+      business:{type:'array',required:false},
+      employments:{type:'array',itemType:'object',required:false},
+      educations:{type:'array',itemType:'object',required:false}
     })
     const user = await User.findByIdAndUpdate(ctx.params.id,ctx.request.body)
     if(!user){
