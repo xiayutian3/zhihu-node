@@ -23,6 +23,10 @@ const userSchema = new Schema({
       entrance_year:Number,
       graduation_year:Number
     }],select:false
+  },
+  following:{
+    type:[{type:Schema.Types.ObjectId,ref:'User'}],   //ref 引用，与User进行关联
+    select:false
   }
 })
 module.exports = model('User',userSchema)

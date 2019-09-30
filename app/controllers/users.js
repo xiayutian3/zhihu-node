@@ -82,6 +82,20 @@ class UsersCtl {
       token
     }
   }
+  async listFollowing(ctx){   //关注的人的列表
+    const user = await User.findById(ctx.params.id).select('+following').populate('following')  //不仅能获取到id，还能获取用户其他信息，不加populate，那就只有id了
+    if(!user) {ctx.throw(404)}
+    ctx.body = user.following;
+  }
+  async follow(ctx){
+    const me = await User.findById(ctx.state.user._id).select('+following')
+    // mongoose自带的id不是字符串，需转换，
+    if(!me.following.map(id => id.toString()).includes(ctx.params.id)){ 
+      me.following.push(ctx.params.id)
+      await me.save() //保存在数据库中
+    }
+    ctx.status = 204;  //代表成功并没有内容返回
+  }
 }
 module.exports = new UsersCtl()
 
