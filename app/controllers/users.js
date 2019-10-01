@@ -87,6 +87,17 @@ class UsersCtl {
     if(!user) {ctx.throw(404)}
     ctx.body = user.following;
   }
+  //获取粉丝列表
+  async listFollowers(ctx){
+    const users = await User.find({following:ctx.params.id})
+    ctx.body = users
+  }
+  //判断用户是否存在的中间件
+  async checkUserExist(ctx,next){
+    const user = await User.findById(ctx.params.id)
+    if(!user){ctx.throw(404,'用户不存在')}
+    await next()
+  }
   async follow(ctx){
     const me = await User.findById(ctx.state.user._id).select('+following')
     // mongoose自带的id不是字符串，需转换，
@@ -95,6 +106,15 @@ class UsersCtl {
       await me.save() //保存在数据库中
     }
     ctx.status = 204;  //代表成功并没有内容返回
+  }
+  async unfollow(ctx){
+    const me = await User.findById(ctx.state.user._id).select('+following')
+    const index = me.following.map(id => id.toString()).indexOf(ctx.params.id)
+    if(index >-1){
+      me.following.splice(index,1)
+      await me.save()
+    }
+    ctx.status = 204
   }
 }
 module.exports = new UsersCtl()

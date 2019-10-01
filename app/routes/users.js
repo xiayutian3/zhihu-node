@@ -2,7 +2,8 @@ const jwt = require('koa-jwt')  //koa-jwt
 const jsonwebtoken = require('jsonwebtoken') //其他库的jwt
 const Router = require('koa-router')
 const { 
-  find,findById,create,updated,deleted,login,listFollowing,follow
+  find,findById,create,updated,deleted,login,
+  listFollowing,listFollowers,checkUserExist,follow,unfollow
 } = require('../controllers/users')
 const {secret} = require('../config')
 const router = new Router({prefix:'/users'})
@@ -55,10 +56,12 @@ router.delete('/:id',authkoajwt,checkOwner,deleted)
 router.post('/login',login)
 //关注的人列表
 router.get('/:id/following',listFollowing)
+//获取粉丝列表
+router.get('/:id/followers',listFollowers)
 //关注
-router.put('/following/:id',authkoajwt,follow)
+router.put('/following/:id',authkoajwt,checkUserExist,follow)
 //取消关注
-
+router.delete('/following/:id',authkoajwt,checkUserExist,unfollow)
 
 
 
