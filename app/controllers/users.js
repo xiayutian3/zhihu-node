@@ -2,14 +2,25 @@ const jsonwebtoken = require('jsonwebtoken')
 const User = require('../models/users')
 const {secret} = require('../config')
 
+//用户登录，注册。鉴权，授权等
+
 class UsersCtl {
   async find(ctx){
     // 加上密码,age返回 中间要有空格隔开  .select('+password')  .select('+password +age')  省略密码 .select('-password')
     // ctx.body = await User.find().select('+password')
-    ctx.body = await User.find()
+    // ctx.body = await User.find()
+
+    // 添加分页
+    // 给per_page默认为3
+    const {per_page=3}= ctx.query
+    const page = Math.max(ctx.query.page*1,1) - 1
+    const perPage = Math.max(per_page*1,1);
+    ctx.body = await User.find().limit(perPage).skip(page*perPage)
+
   }
   async findById(ctx){
-    const {fields} = ctx.query
+     //如果fields不存在 就默认给他个 ''
+    const {fields=''} = ctx.query
     const selectFields = fields.split(';').filter(f => f).map(f=>' +'+f).join('')
     // console.log(fields.split(';')) //   [ 'locations', 'business' ]
     // console.log(selectFields)  //   ‘ +locations +business’

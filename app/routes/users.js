@@ -1,5 +1,5 @@
-const jwt = require('koa-jwt')  //koa-jwt
-const jsonwebtoken = require('jsonwebtoken') //其他库的jwt
+const jwt = require('koa-jwt')  //koa-jwt 路由权限控制
+const jsonwebtoken = require('jsonwebtoken') //可以生成token 也可以验证，（不过验证比较简单）其他库的jwt
 const Router = require('koa-router')
 const { 
   find,findById,create,updated,deleted,login,

@@ -1,5 +1,8 @@
 const mongoose = require('mongoose')
 const { Schema, model } = mongoose
+
+//用户 模型
+
 const userSchema = new Schema({
   //select 可以隐藏字段
   __v:{type:Number,select:false},
