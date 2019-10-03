@@ -11,11 +11,14 @@ class UsersCtl {
     // ctx.body = await User.find()
 
     // 添加分页
-    // 给per_page默认为3
-    const {per_page=3}= ctx.query
+    // 给per_page默认为10
+    const {per_page=10}= ctx.query
     const page = Math.max(ctx.query.page*1,1) - 1
     const perPage = Math.max(per_page*1,1);
-    ctx.body = await User.find().limit(perPage).skip(page*perPage)
+    // ctx.body = await User.find().limit(perPage).skip(page*perPage)
+
+    //模糊搜索
+    ctx.body = await User.find({name:new RegExp(ctx.query.q)}).limit(perPage).skip(page*perPage)
 
   }
   async findById(ctx){
@@ -27,8 +30,20 @@ class UsersCtl {
 
     //返回中就多了两个字段locations，employments  中间要有空格隔开 第一个前边有空格也没关系
     // const user = await User.findById(ctx.params.id).select('+locations +employments')
+
+    const populateStr = fields.split(';').filter(f => f).map(f=> {
+      if(f === "employments"){
+        return 'employments.company employments.job'
+      }
+      if(f === 'educations'){
+        return 'educations.school educations.major'
+      }
+      return f
+    }).join(' ')
     
     const user = await User.findById(ctx.params.id).select(selectFields)
+    .populate(populateStr)
+      // .populate('following locations business employments.company employments.job educations.school educations.major')
     if(!user){
       ctx.throw(404,'用户不存在')
       return
