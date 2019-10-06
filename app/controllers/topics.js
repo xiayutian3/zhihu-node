@@ -1,4 +1,5 @@
 const Topic = require('../models/topics')
+const User = require('../models/users')
 
 
 //话题接口
@@ -22,6 +23,13 @@ class TopicsCtl {
     .limit(perPage).skip(page*perPage)
 
   }
+  // 检查话题存不存在
+  async checkTopicExist(ctx,next){
+    const topic = await Topic.findById(ctx.params.id)
+    if(!topic){ctx.throw(404,'话题不存在')}
+    await next()
+  }
+
   async findById(ctx){
     //如果fields不存在 就默认给他个 ''
     const {fields=''} = ctx.query
@@ -46,6 +54,10 @@ class TopicsCtl {
     })
     const topic = await Topic.findByIdAndUpdate(ctx.params.id,ctx.request.body)
     ctx.body = topic
+  }
+  async listFollowers(ctx){
+    const users = await User.find({followingTopics:ctx.params.id})
+    ctx.body = users
   }
 }
 module.exports = new TopicsCtl()

@@ -30,6 +30,10 @@ const userSchema = new Schema({
   following:{
     type:[{type:Schema.Types.ObjectId,ref:'User'}],   //ref 引用类型，与User进行关联
     select:false
+  },
+  followingTopics:{
+    type:[{type:Schema.Types.ObjectId,ref:'Topic'}], 
+    select:false
   }
 })
 module.exports = model('User',userSchema)

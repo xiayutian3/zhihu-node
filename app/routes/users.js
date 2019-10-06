@@ -3,8 +3,10 @@ const jsonwebtoken = require('jsonwebtoken') //可以生成token 也可以验证
 const Router = require('koa-router')
 const { 
   find,findById,create,updated,deleted,login,
-  listFollowing,listFollowers,checkUserExist,follow,unfollow
+  listFollowing,listFollowers,checkUserExist,follow,unfollow,followTopic,unfollowTopic,
+  listFollowingTopic
 } = require('../controllers/users')
+const {checkTopicExist} = require('../controllers/topics')
 const {secret} = require('../config')
 const router = new Router({prefix:'/users'})
 
@@ -58,10 +60,16 @@ router.post('/login',login)
 router.get('/:id/following',listFollowing)
 //获取粉丝列表
 router.get('/:id/followers',listFollowers)
-//关注
+//关注 某人
 router.put('/following/:id',authkoajwt,checkUserExist,follow)
-//取消关注
+//取消关注 某人
 router.delete('/following/:id',authkoajwt,checkUserExist,unfollow)
+//获取某个人的关注话题列表
+router.get('/:id/followingTopics',listFollowingTopic)
+//关注 话题
+router.put('/followTopics/:id',authkoajwt,checkTopicExist,followTopic)
+//取消关注 话题
+router.delete('/unfollowTopics/:id',authkoajwt,checkTopicExist,unfollowTopic)
 
 
 
