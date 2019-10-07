@@ -1,5 +1,6 @@
 const jsonwebtoken = require('jsonwebtoken')
 const User = require('../models/users')
+const Question = require('../models/questions')
 const {secret} = require('../config')
 
 //用户登录，注册。鉴权，授权等
@@ -166,6 +167,12 @@ class UsersCtl {
     }
     ctx.status = 204
   }
+
+  async listQuestions(ctx){
+    const questions = await Question.find({questioner:ctx.params.id})
+    ctx.body = questions
+  }
+
 }
 module.exports = new UsersCtl()
 

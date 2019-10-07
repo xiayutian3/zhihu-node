@@ -4,7 +4,7 @@ const Router = require('koa-router')
 const { 
   find,findById,create,updated,deleted,login,
   listFollowing,listFollowers,checkUserExist,follow,unfollow,followTopic,unfollowTopic,
-  listFollowingTopic
+  listFollowingTopic,listQuestions
 } = require('../controllers/users')
 const {checkTopicExist} = require('../controllers/topics')
 const {secret} = require('../config')
@@ -71,7 +71,8 @@ router.put('/followTopics/:id',authkoajwt,checkTopicExist,followTopic)
 //取消关注 话题
 router.delete('/unfollowTopics/:id',authkoajwt,checkTopicExist,unfollowTopic)
 
-
+//用户的提问的问题列表
+router.get('/:id/questions',listQuestions)
 
 
 
