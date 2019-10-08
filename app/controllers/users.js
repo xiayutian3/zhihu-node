@@ -173,6 +173,30 @@ class UsersCtl {
     ctx.body = questions
   }
 
+  //取消和关注问题
+  async followQuestion(ctx){
+    const mine = await User.findById(ctx.state.user._id).select('+followingQuestions')
+    if(!mine.followingQuestions.map(id => id.toString()).includes(ctx.params.id)){
+      mine.followingQuestions.push(ctx.params.id)
+      await mine.save()
+    }
+    ctx.status = 204
+  }
+  async unfollowQuestion(ctx){
+    const mine = await User.findById(ctx.state.user._id).select('+followingQuestions')
+    const index = mine.followingQuestions.map(id => id.toString()).indexOf(ctx.params.id)
+    if(index>-1){
+      mine.followingQuestions.splice(index,1)
+      await mine.save()
+    }
+    ctx.status = 204
+  }
+
+  async listFollowingQuestion(ctx){
+    const mine = await User.findById(ctx.params.id).select('+followingQuestions').populate('followingQuestions')
+    if(!mine) {ctx.throw(404,'用户不存在')}
+    ctx.body = mine.followingQuestions
+  }
 }
 module.exports = new UsersCtl()
 
