@@ -4,10 +4,13 @@ const Router = require('koa-router')
 const { 
   find,findById,create,updated,deleted,login,
   listFollowing,listFollowers,checkUserExist,follow,unfollow,followTopic,unfollowTopic,
-  listFollowingTopic,listQuestions,followQuestion,unfollowQuestion,listFollowingQuestion
+  listFollowingTopic,listQuestions,followQuestion,unfollowQuestion,listFollowingQuestion,
+  listLikingAnswers,likeAnswer,unlikeAnswer,listdisLikingAnswers,dislikeAnswer,undislikeAnswer,
+  listcollectingAnswers,collectAnswer,uncollectAnswer
 } = require('../controllers/users')
 const {checkTopicExist} = require('../controllers/topics')
 const {checkQuestionExist} = require('../controllers/questions')
+const {checkAnswerExist} = require('../controllers/answers')
 const {secret} = require('../config')
 const router = new Router({prefix:'/users'})
 
@@ -84,6 +87,26 @@ router.put('/followQuestions/:id',authkoajwt,checkQuestionExist,followQuestion)
 router.delete('/unfollowQuestions/:id',authkoajwt,checkQuestionExist,unfollowQuestion)
 
 
+// 赞答案相关
+router.get('/:id/likingAnswers',listLikingAnswers)  //赞过答案的列表
+router.put('/likingAnswers/:id',authkoajwt,checkAnswerExist,likeAnswer,undislikeAnswer)   //点赞答案 (赞踩的互斥关系，点赞的时候再执行，取消踩。点踩的时候再执行消赞)
+router.delete('/likingAnswers/:id',authkoajwt,checkAnswerExist,unlikeAnswer) //取消点赞答案
+
+// 踩答案相关
+router.get('/:id/dislikingAnswers',listdisLikingAnswers)  //踩过答案的列表
+router.put('/dislikingAnswers/:id',authkoajwt,checkAnswerExist,dislikeAnswer,unlikeAnswer)   //踩答案 (赞踩的互斥关系，点赞的时候再执行，取消踩。点踩的时候再执行消赞)
+router.delete('/dislikingAnswers/:id',authkoajwt,checkAnswerExist,undislikeAnswer) //取消踩答案
+
+//收藏答案相关
+router.get('/:id/collectingAnswers',listcollectingAnswers)  //收藏答案列表
+router.put('/collectingAnswers/:id',authkoajwt,checkAnswerExist,collectAnswer)  // 收藏答案
+router.delete('/collectingAnswers/:id',authkoajwt,checkAnswerExist,uncollectAnswer)  //取消收藏答案
+
+
+module.exports = router
+
+
+
 
 // router.get('/',async(ctx) => {
 //   // ctx.set('Allow','GET, POST')
@@ -110,5 +133,3 @@ router.delete('/unfollowQuestions/:id',authkoajwt,checkQuestionExist,unfollowQue
 //   ctx.status = 204
 //   db.splice(ctx.params.id*1,1)
 // })
-
-module.exports = router
