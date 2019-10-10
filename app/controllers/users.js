@@ -291,6 +291,35 @@ class UsersCtl {
     }
 
 
+
+        //关注的答案评论列表
+        async listlikingComments(ctx){  
+          const user = await User.findById(ctx.params.id).select('+likingComments').populate('likingComments') 
+          if(!user) {ctx.throw(404,'用户不存在')}
+          ctx.body = user.likingComments;
+        }
+        //关注答案评论
+        async likingComments(ctx,next){
+          const me = await User.findById(ctx.state.user._id).select('+likingComments')
+          if(!me.likingComments.map(id => id.toString()).includes(ctx.params.id)){ 
+            me.likingComments.push(ctx.params.id)
+            await me.save()
+          }
+          ctx.status = 204;
+          await next()
+        }
+        //取消关注答案评论
+        async unlikingComments(ctx){
+          const me = await User.findById(ctx.state.user._id).select('+likingComments')
+          const index = me.likingComments.map(id => id.toString()).indexOf(ctx.params.id)
+          if(index >-1){
+            me.likingComments.splice(index,1)
+            await me.save()
+          }
+          ctx.status = 204
+        }
+
+
 }
 module.exports = new UsersCtl()
 

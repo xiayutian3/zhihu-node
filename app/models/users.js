@@ -50,6 +50,10 @@ const userSchema = new Schema({
   collectingAnswers:{
     type:[{type:Schema.Types.ObjectId,ref:'Answer'}], 
     select:false
+  },
+  likingComments:{
+    type:[{type:Schema.Types.ObjectId,ref:'Comment'}], 
+    select:false
   }
-})
+},{timestamps:true})
 module.exports = model('User',userSchema)

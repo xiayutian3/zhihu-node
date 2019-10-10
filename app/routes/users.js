@@ -6,11 +6,13 @@ const {
   listFollowing,listFollowers,checkUserExist,follow,unfollow,followTopic,unfollowTopic,
   listFollowingTopic,listQuestions,followQuestion,unfollowQuestion,listFollowingQuestion,
   listLikingAnswers,likeAnswer,unlikeAnswer,listdisLikingAnswers,dislikeAnswer,undislikeAnswer,
-  listcollectingAnswers,collectAnswer,uncollectAnswer
+  listcollectingAnswers,collectAnswer,uncollectAnswer,
+  listlikingComments,likingComments,unlikingComments
 } = require('../controllers/users')
 const {checkTopicExist} = require('../controllers/topics')
 const {checkQuestionExist} = require('../controllers/questions')
 const {checkAnswerExist} = require('../controllers/answers')
+const {checkCommentExist} = require('../controllers/comments')
 const {secret} = require('../config')
 const router = new Router({prefix:'/users'})
 
@@ -101,6 +103,11 @@ router.delete('/dislikingAnswers/:id',authkoajwt,checkAnswerExist,undislikeAnswe
 router.get('/:id/collectingAnswers',listcollectingAnswers)  //收藏答案列表
 router.put('/collectingAnswers/:id',authkoajwt,checkAnswerExist,collectAnswer)  // 收藏答案
 router.delete('/collectingAnswers/:id',authkoajwt,checkAnswerExist,uncollectAnswer)  //取消收藏答案
+
+//关注 答案评论
+router.get('/:id/likingComments',listlikingComments)  //关注答案评论的列表
+router.put('/likingComments/:id',authkoajwt,checkCommentExist,likingComments)  // 关注答案评论
+router.delete('/likingComments/:id',authkoajwt,checkCommentExist,unlikingComments)  //取消关注答案评论
 
 
 module.exports = router
